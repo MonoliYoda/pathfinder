@@ -589,6 +589,11 @@ class Map extends Controller\AccessController {
         }
 
         foreach($maps as $map){
+            // update Tags =================================================================================
+            $map->nextBookmarks = SystemTag::nextBookmarks($map);
+            $activeCharacter = $this->getCharacter();
+            $map->save($activeCharacter);
+            
             // format map Data for return/broadcast
             if($mapData = $this->getFormattedMapData($map)){
                 if(in_array($map->_id, $mapIdsChanged)){
@@ -597,11 +602,6 @@ class Map extends Controller\AccessController {
 
                 $return->mapData[] = $mapData;
             }
-            // update Tags =================================================================================
-            $map->nextBookmarks = SystemTag::nextBookmarks($map);
-            $activeCharacter = $this->getCharacter();
-            $map->save($activeCharacter);
-
         }
 
         return $return;
@@ -779,7 +779,7 @@ class Map extends Controller\AccessController {
                     $sameSystem = true;
                     $targetExists = $sourceExists;
                     $targetSystem = $sourceSystem;
-                }elseif($targetSystemId){
+                } elseif ($targetSystemId){
                     // check if target system is already on this map
                     $targetSystem = $map->getSystemByCCPId($targetSystemId, [AbstractModel::getFilter('active', true)]);
 

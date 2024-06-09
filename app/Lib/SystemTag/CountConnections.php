@@ -6,6 +6,7 @@ use Exodus4D\Pathfinder\Model\Pathfinder\ConnectionModel;
 use Exodus4D\Pathfinder\Model\Pathfinder\MapModel;
 use Exodus4D\Pathfinder\Model\Pathfinder\SystemModel;
 use Exodus4D\Pathfinder\Model\Universe\AbstractUniverseModel;
+use Exodus4D\Pathfinder\Lib\Config;
 use Exodus4D\Pathfinder\Lib\SystemTag;
 
 class CountConnections implements SystemTagInterface
@@ -27,25 +28,32 @@ class CountConnections implements SystemTagInterface
             return '';
         }
 
+        //Skip home hole
+        $homeId = Config::getPathfinderData('systemtag')['HOME_SYSTEM_ID'];
+        if ($targetSystem->systemId === $homeId) {
+            return '';
+        }
+
         // Get all systems from active map
         $systems = $map->getSystemsData();
 
         // empty array to append tags to,
         // iterate over systems and append tag to $tags if security matches targetSystem security
-        // and it is not our home (locked)
+        // and it is not our home checking by system id
         $tags = array();
+        
         foreach ($systems as $system) {
-            if ($system->security === $targetClass && !$system->locked && $system->tag) {
+            if ($system->security === $targetClass && $system->systemId !== $homeId && $system->tag) {
                 array_push($tags, SystemTag::tagToInt($system->tag));
             }
         };
 
-        // try to assign "s(tatic)" tag to connections from our home by checking if source is locked,
-        // if dest is static, and finally if "Static" (545) tag is already taken
-        if ($sourceSystem->locked){
+        // try to assign "s(tatic)" tag to connections from our home by checking by system id,
+        // if dest is static, and finally if "Static" (1000) tag is already taken
+        if ($sourceSystem->systemId === $homeId){
             if($targetClass == "C3" || $targetClass == "H" ){
-                if(!in_array(545, $tags)) {
-                    return 'Static';
+                if(!in_array(SystemTag::INT_STATIC, $tags)) {
+                    return SystemTag::TAG_STATIC;
                 }
             }
         }

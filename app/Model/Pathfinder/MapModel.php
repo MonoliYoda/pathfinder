@@ -491,13 +491,13 @@ class MapModel extends AbstractMapTrackingModel {
 
     /**
      * get blank system model pre-filled with default SDE data
-     * -> check for "inactive" systems on this map first!
+     * -> check for "existing" systems on this map first!
      * @param int $systemId
      * @return SystemModel
      * @throws \Exception
      */
     public function getNewSystem(int $systemId) : SystemModel {
-        // check for "inactive" system
+        // check for "existing" system
         $system = $this->getSystemByCCPId($systemId);
         if(is_null($system)){
             /**
@@ -508,9 +508,13 @@ class MapModel extends AbstractMapTrackingModel {
             $system->systemId = $systemId;
             $system->mapId = $this;
             $system->setType();
-            $system->tag = SystemTag::generateFor($system, $system, $this);
+        } elseif ($system->isActive()){
+            // system exists and is active, return as is to avoid re-tagging it
+            return $system;
         }
 
+        // generate tag for the new systems
+        $system->tag = SystemTag::generateFor($system, $system, $this);
         $system->setActive(true);
 
         return $system;
