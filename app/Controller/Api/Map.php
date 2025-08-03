@@ -664,14 +664,20 @@ class Map extends Controller\AccessController {
         $systemData = (array)$postData['systemData'];
         $newSystemPositions = (array)$postData['newSystemPositions'];
         $activeCharacter = $this->getCharacter();
-
+        $otherCharacters = $activeCharacter->getUser()->getCharacters();
         $return = (object)[];
 
         // update current location
         // -> suppress temporary timeout errors
         $activeCharacter = $activeCharacter->updateLog();
 
-        if( !empty($mapIds) ){
+        //update other characters
+        foreach ($otherCharacters as $character) {
+            $activatedCharacter = $this->getUser()->getSessionCharacter($character->_id) ?? $character;
+            $activatedCharacter->updateLog();
+        }
+
+        if (!empty($mapIds)) {
             // IMPORTANT for now -> just update a single map (save performance)
             $mapId = (int)reset($mapIds);
             // get map and check map access
@@ -679,6 +685,10 @@ class Map extends Controller\AccessController {
                 // check character log (current system) and manipulate map (e.g. add new system)
                 if($mapTracking){
                     $map = $this->updateMapByCharacter($map, $activeCharacter, $newSystemPositions);
+                    foreach ($otherCharacters as $character) {
+                        $activatedCharacter = $this->getUser()->getSessionCharacter($character->_id) ?? $character;
+                        $map = $this->updateMapByCharacter($map, $activatedCharacter, $newSystemPositions);
+                    }
                 }
 
                 // mapUserData ----------------------------------------------------------------------------------------
