@@ -1485,6 +1485,10 @@ table{
     border-color: $pink-dark;
   }
 
+  &.pf-map-connection-wh-eol-critical{
+    border-color: $red;
+  }
+
   &.pf-map-connection-wh-reduced{
     background-color: $orange;
   }
@@ -1579,6 +1583,10 @@ table{
 
   &.pf-wh-eol{
     border-color: $pink-dark;
+  }
+
+  &.pf-wh-eol-critical{
+    border-color: $red;
   }
 
   &.pf-wh-reduced{

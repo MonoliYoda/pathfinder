@@ -102,7 +102,8 @@ define([
         let moduleData = {
             id: config.connectionContextMenuId,
             items: [
-                {icon: 'fa-hourglass-end', action: 'wh_eol', text: 'toggle EOL'},
+                {icon: 'fa-hourglass-end', action: 'wh_eol', text: 'toggle EOL (4h)'},
+                {icon: 'fa-hourglass-end', action: 'wh_eol_critical', text: 'toggle EOL (1h)'},
                 {icon: 'fa-exclamation-triangle', action: 'preserve_mass', text: 'preserve mass'},
                 {icon: 'fa-sync-alt', action: 'wh_rolling', text: 'rolling'},
                 {icon: 'fa-reply fa-rotate-180', action: 'change_status', text: 'mass status', subitems: [

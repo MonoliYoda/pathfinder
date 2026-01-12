@@ -508,6 +508,43 @@ define([
                     }
                 }
             }
+        },
+        connectionEolCritical: {
+            title: 'EOL Critical',
+            trigger: 'hover',
+            class: 'pf-map-overlay-connection-eol-critical',
+            iconClass: ['fas', 'fa-fw', 'fa-exclamation-circle'],
+            hoverIntent: {
+                over: function(e){
+                    let map = getMapObjectFromOverlayIcon(this);
+                    let connections = MapUtil.searchConnectionsByScopeAndType(map, 'wh', ['wh_eol_critical']);
+                    let serverDate = Util.getServerTime();
+
+                    for(let connection of connections){
+                        let eolTimestamp = connection.getParameter('eolUpdated');
+                        let eolDate = Util.convertTimestampToServerTime(eolTimestamp);
+                        let diff = Util.getTimeDiffParts(eolDate, serverDate);
+
+                        connection.addOverlay([
+                            'Label',
+                            {
+                                label: '<i class="fas fa-fw fa-exclamation-circle"></i>&nbsp;' + Util.formatTimeParts(diff),
+                                id: MapOverlayUtil.config.connectionOverlayEolCriticalId,
+                                cssClass: [MapOverlayUtil.config.componentOverlayClass, 'eol-critical'].join(' '),
+                                location: 0.15
+                            }
+                        ]);
+                    }
+                },
+                out: function(e){
+                    let map = getMapObjectFromOverlayIcon(this);
+                    let connections = MapUtil.searchConnectionsByScopeAndType(map, 'wh', ['wh_eol_critical']);
+
+                    for(let connection of connections){
+                        connection.removeOverlay(MapOverlayUtil.config.connectionOverlayEolCriticalId);
+                    }
+                }
+            }
         }
     };
 

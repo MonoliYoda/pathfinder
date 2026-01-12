@@ -766,6 +766,7 @@ define([
                 case 'wh_rolling':   // set "rolling"
                 case 'preserve_mass':   // set "preserve mass
                 case 'wh_eol':          // set "end of life"
+                case 'wh_eol_critical': // set "end of life critical (1h)"
                 MapOverlayUtil.getMapOverlay(mapElement, 'timer').startMapUpdateCounter();
                 MapUtil.toggleConnectionType(connection, action);
                 MapUtil.markAsChanged(connection);
@@ -1055,7 +1056,7 @@ define([
         }
 
         // check for unhandled connection type changes ----------------------------------------------------------------
-        let allToggleTypes = ['wh_eol', 'preserve_mass', 'wh_rolling'];
+        let allToggleTypes = ['wh_eol', 'wh_eol_critical', 'preserve_mass', 'wh_rolling'];
         let newTypes = allToggleTypes.intersect(newConnectionData.type.diff(currentConnectionData.type));
         let oldTypes = allToggleTypes.intersect(currentConnectionData.type.diff(newConnectionData.type));
 
@@ -1224,6 +1225,7 @@ define([
                 mapOverlay.updateOverlayIcon('systemPopover', 'show');
                 mapOverlay.updateOverlayIcon('connection', 'show');
                 mapOverlay.updateOverlayIcon('connectionEol', 'show');
+                mapOverlay.updateOverlayIcon('connectionEolCritical', 'show');
 
                 resolve({
                     action: 'newMapElement',
@@ -1882,6 +1884,7 @@ define([
             // hidden menu actions
             if(scope === 'abyssal'){
                 options.hidden.push('wh_eol');
+                options.hidden.push('wh_eol_critical');
                 options.hidden.push('preserve_mass');
                 options.hidden.push('wh_rolling');
                 options.hidden.push('change_status');
@@ -1891,6 +1894,7 @@ define([
                 options.hidden.push('separator');
             }else if(scope === 'stargate'){
                 options.hidden.push('wh_eol');
+                options.hidden.push('wh_eol_critical');
                 options.hidden.push('preserve_mass');
                 options.hidden.push('wh_rolling');
                 options.hidden.push('change_status');
@@ -1899,6 +1903,7 @@ define([
                 options.hidden.push('scope_stargate');
             }else if(scope === 'jumpbridge'){
                 options.hidden.push('wh_eol');
+                options.hidden.push('wh_eol_critical');
                 options.hidden.push('preserve_mass');
                 options.hidden.push('wh_rolling');
                 options.hidden.push('change_status');
@@ -1912,6 +1917,9 @@ define([
             // active menu actions
             if(connection.hasType('wh_eol') === true){
                 options.active.push('wh_eol');
+            }
+            if(connection.hasType('wh_eol_critical') === true){
+                options.active.push('wh_eol_critical');
             }
             if(connection.hasType('preserve_mass') === true){
                 options.active.push('preserve_mass');

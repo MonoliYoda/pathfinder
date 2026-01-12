@@ -740,7 +740,8 @@ $mapBubbleWidth:        30px;
   .pf-map-connection-wh-fresh,
   .pf-map-connection-wh-reduced,
   .pf-map-connection-wh-critical,
-  .pf-map-connection-wh-eol{
+  .pf-map-connection-wh-eol,
+  .pf-map-connection-wh-eol-critical{
     z-index: 70;
   }
 
@@ -748,6 +749,13 @@ $mapBubbleWidth:        30px;
 
     path:first-child{
       stroke: $pink-dark;
+    }
+  }
+
+  .pf-map-connection-wh-eol-critical {
+
+    path:first-child{
+      stroke: $red;
     }
   }
 
@@ -891,6 +899,11 @@ $mapBubbleWidth:        30px;
   .eol{
     background-color: $gray;
     color: $pink-dark;
+  }
+
+  .eol-critical{
+    background-color: $red-dark;
+    color: $gray-lightest;
   }
 
   // Arrow overlays ===================================================================================================

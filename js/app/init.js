@@ -380,6 +380,9 @@ define([], () => {
             wh_eol: {
                 cssClass: 'pf-map-connection-wh-eol'
             },
+            wh_eol_critical: {
+                cssClass: 'pf-map-connection-wh-eol-critical'
+            },
             wh_fresh: {
                 cssClass: 'pf-map-connection-wh-fresh'
             },
