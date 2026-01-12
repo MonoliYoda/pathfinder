@@ -933,32 +933,42 @@ class Map extends Controller\AccessController {
                             $addConnection &&
                             !$connection
                         ){
-                            // .. do not add connection if character got "podded" -------------------------------------
-                            if(
-                                $targetLog->shipTypeId == 670 &&
-                                $character->cloneLocationId
-                            ){
-                                // .. current character location must be clone location
-                                if(
-                                    (
-                                        'station' == $character->cloneLocationType &&
-                                        $character->cloneLocationId == $sourceLog->stationId
-                                    ) || (
-                                        'structure' == $character->cloneLocationType &&
-                                        $character->cloneLocationId == $sourceLog->structureId
-                                    )
-                                ){
-                                    // .. now we need to check jump distance between systems
-                                    // -> if > 1 it is !very likely! podded jump
-                                    if(empty($route)){
-                                        $route = (new Controller\Api\Rest\Route())->searchRoute($sourceSystem->systemId, $targetSystem->systemId, 1);
-                                    }
+                        // .. do not add connection if character got "podded" -------------------------------------
+                        if (
+                            // Capsule ship types (670 = Capsule). Keep 33328 if your logs use it for special capsules.
+                            // If you truly need typeId 29 too, add it here: [670, 33328, 29]
+                            in_array($targetLog->shipTypeId, [670, 33328], true) &&
+                            !empty($character->cloneLocationId)
+                        ) {
+                            // .. current character location must be clone location (this should compare to TARGET log, not source)
+                            $isAtCloneLocation =
+                                (
+                                    $character->cloneLocationType === 'station' &&
+                                    !empty($targetLog->stationId) &&
+                                    (int)$character->cloneLocationId === (int)$targetLog->stationId
+                                ) || (
+                                    $character->cloneLocationType === 'structure' &&
+                                    !empty($targetLog->structureId) &&
+                                    (int)$character->cloneLocationId === (int)$targetLog->structureId
+                                );
 
-                                    if(!$route['routePossible']){
-                                        $addConnection = false;
-                                    }
+                            if ($isAtCloneLocation) {
+                                // .. now we need to check jump distance between systems
+                                // -> if > 1 it is !very likely! podded jump
+                                // Compute a fresh route for this specific check (avoids reusing an unrelated $route value)
+                                $podRoute = (new Controller\Api\Rest\Route())->searchRoute(
+                                    $sourceSystem->systemId,
+                                    $targetSystem->systemId,
+                                    1
+                                );
+
+                                // If the route is not possible within 1 jump, suppress adding a connection
+                                if (empty($podRoute['routePossible'])) {
+                                    $addConnection = false;
                                 }
                             }
+                        }
+
 
                             if($addConnection){
                                 $connection = $map->getNewConnection($sourceSystem, $targetSystem);
