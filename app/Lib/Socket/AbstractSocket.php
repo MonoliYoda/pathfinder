@@ -21,7 +21,7 @@ abstract class AbstractSocket implements SocketInterface {
      * max length for JSON data string
      * -> throw OverflowException on exceed
      */
-    const JSON_DECODE_MAX_LENGTH = 65536 * 4;
+    const JSON_DECODE_MAX_LENGTH = 65536 * 8; //Double from original to improve many items on map performance.
 
     /**
      * @var EventLoop\LoopInterface|null
