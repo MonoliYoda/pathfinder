@@ -254,7 +254,7 @@ Session data is stored in the `PF` database (or Redis). Role/Right models contro
 1. **PHP** ≥ 7.2, **MySQL/MariaDB**, **Redis** (optional but recommended)
 2. **Composer**: `composer install`
 3. **Node.js + npm**: `npm install`
-4. **Configure**: copy and fill in `app/environment.ini`
+4. **Configure**: copy `app/environment.ini` to `conf/environment.ini` (or otherwise configure environment variables) and fill in your local settings there
 5. **Build assets**: `npm run gulp -- production` (or `npm run gulp` for development/watch mode)
 6. **Register CCP application** at [developers.eveonline.com](https://developers.eveonline.com) to get SSO credentials
 7. Point a web server (Apache/nginx) at the project root; `index.php` handles all routes
